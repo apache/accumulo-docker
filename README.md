@@ -17,7 +17,7 @@ While it is easier to pull from DockerHub, the image will default to the softwar
 | Software    | Version        |
 |-------------|----------------|
 | [Accumulo]  | 2.0.0-SNAPSHOT |
-| [Hadoop]    | 2.7.3          |
+| [Hadoop]    | 2.7.4          |
 | [Zookeeper] | 3.4.9          |
 
 If these versions do not match what is running on your cluster, you should consider building
@@ -105,6 +105,13 @@ docker run -d --network="host" accumulo tserver $ACCUMULO_CL_OPTS
 docker run -d --network="host" accumulo tserver $ACCUMULO_CL_OPTS
 docker run -d --network="host" accumulo master $ACCUMULO_CL_OPTS
 docker run -d --network="host" accumulo gc $ACCUMULO_CL_OPTS
+```
+
+If you would like to set Java heap size inside the Docker container, start the local docker container using the
+command below:
+
+```
+docker run -e ACCUMULO_JAVA_OPTS='-Xmx1g' -d --network="host" accumulo tserver $ACCUMULO_CL_OPTS
 ```
 
 ## Marathon
