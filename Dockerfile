@@ -22,9 +22,9 @@ ARG HADOOP_VERSION
 ARG HADOOP_USER_NAME
 ARG ZOOKEEPER_VERSION
 
-ENV HADOOP_VERSION ${HADOOP_VERSION:-2.7.4}
+ENV HADOOP_VERSION ${HADOOP_VERSION:-3.1.1}
 ENV HADOOP_USER_NAME ${HADOOP_USER_NAME:-accumulo}
-ENV ZOOKEEPER_VERSION ${ZOOKEEPER_VERSION:-3.4.9}
+ENV ZOOKEEPER_VERSION ${ZOOKEEPER_VERSION:-3.4.13}
 ENV ACCUMULO_VERSION 2.0.0-SNAPSHOT
 
 ENV APACHE_DIST_URLS \
@@ -66,11 +66,11 @@ RUN mv /tmp/accumulo-$ACCUMULO_VERSION /opt/accumulo
 
 RUN /opt/accumulo/bin/accumulo-util build-native
 
-ADD ./accumulo-site.xml /opt/accumulo/conf
+ADD ./accumulo.properties /opt/accumulo/conf
 ADD ./log4j-service.properties /opt/accumulo/conf
 ADD ./log4j-monitor.properties /opt/accumulo/conf
 
-ENV HADOOP_PREFIX /opt/hadoop
+ENV HADOOP_HOME /opt/hadoop
 ENV ZOOKEEPER_HOME /opt/zookeeper
 ENV ACCUMULO_HOME /opt/accumulo
 ENV PATH "$PATH:$ACCUMULO_HOME/bin"

@@ -62,14 +62,14 @@ docker run accumulo classpath
 
 # Run Accumulo using Docker
 
-Before you can run Accumulo services in Docker, you will need to install Accumulo, configure `accumulo-site.xml`,
-and initialize your instance with `--upload-accumulo-site`. This will upload configuration to Zookeeper and limit
+Before you can run Accumulo services in Docker, you will need to install Accumulo, configure `accumulo.properties`,
+and initialize your instance with `--upload-accumulo-props`. This will upload configuration to Zookeeper and limit
 how much configuration needs to be set on the command line.
 
 ```bash
-$ accumulo init --upload-accumulo-site
+$ accumulo init --upload-accumulo-props
 ...
-Uploading properties in accumulo-site.xml to Zookeeper. Properties that cannot be set in Zookeeper will be skipped:
+Uploading properties in accumulo.properties to Zookeeper. Properties that cannot be set in Zookeeper will be skipped:
 Skipped - instance.secret = <hidden>
 Skipped - instance.volumes = hdfs://localhost:8020/accumulo
 Skipped - instance.zookeeper.host = localhost:2181
