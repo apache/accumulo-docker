@@ -14,11 +14,11 @@ To obtain the docker image created by this project, you can either pull it from 
 
 While it is easier to pull from DockerHub, the image will default to the software versions below:
 
-| Software    | Version        |
-|-------------|----------------|
-| [Accumulo]  | 2.0.0-SNAPSHOT |
-| [Hadoop]    | 2.7.4          |
-| [Zookeeper] | 3.4.9          |
+| Software    | Version       |
+|-------------|---------------|
+| [Accumulo]  | 2.0.0-alpha-1 |
+| [Hadoop]    | 2.7.4         |
+| [Zookeeper] | 3.4.9         |
 
 If these versions do not match what is running on your cluster, you should consider building
 your own image with matching versions. However, Accumulo must be 2.0.0+. Below are instructions for
@@ -28,15 +28,7 @@ building an image:
 
         git clone git@github.com:apache/accumulo-docker.git
 
-2. Until Accumulo 2.0.0 is released, build a Accumulo tarball distribution and copy it to the root
-   directory of the repo.
-
-        git clone git@github.com:apache/accumulo.git
-        cd accumulo/
-        mvn clean package
-        cp assemble/target/accumulo-2.0.0-SNAPSHOT-bin.tar.gz /path/to/accumulo-docker/
-
-3. Build the default Accumulo docker image using the command below.
+2. Build the default Accumulo docker image using the command below.
 
         cd /path/to/accumulo-docker
         docker build -t accumulo .

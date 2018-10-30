@@ -25,7 +25,7 @@ ARG ZOOKEEPER_VERSION
 ENV HADOOP_VERSION ${HADOOP_VERSION:-3.1.1}
 ENV HADOOP_USER_NAME ${HADOOP_USER_NAME:-accumulo}
 ENV ZOOKEEPER_VERSION ${ZOOKEEPER_VERSION:-3.4.13}
-ENV ACCUMULO_VERSION 2.0.0-SNAPSHOT
+ENV ACCUMULO_VERSION 2.0.0-alpha-1
 
 ENV APACHE_DIST_URLS \
   https://www.apache.org/dyn/closer.cgi?action=download&filename= \
@@ -49,16 +49,13 @@ RUN set -eux; \
     [ -n "$success" ]; \
   }; \
   \
-  #download "accumulo.tar.gz" "accumulo/$ACCUMULO_VERSION/accumulo-$ACCUMULO_VERSION-bin.tar.gz" \
+  download "accumulo.tar.gz" "accumulo/$ACCUMULO_VERSION/accumulo-$ACCUMULO_VERSION-bin.tar.gz"; \
   download "hadoop.tar.gz" "hadoop/core/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz"; \
   download "zookeeper.tar.gz" "zookeeper/zookeeper-$ZOOKEEPER_VERSION/zookeeper-$ZOOKEEPER_VERSION.tar.gz"
 
-#RUN tar xzf accumulo.tar.gz -C /tmp/
+RUN tar xzf accumulo.tar.gz -C /tmp/
 RUN tar xzf hadoop.tar.gz -C /tmp/
 RUN tar xzf zookeeper.tar.gz -C /tmp/
-
-# Comment out accumulo-related lines above and remove line below when 2.0.0 is released
-ADD ./accumulo-$ACCUMULO_VERSION-bin.tar.gz /tmp/
 
 RUN mv /tmp/hadoop-$HADOOP_VERSION /opt/hadoop
 RUN mv /tmp/zookeeper-$ZOOKEEPER_VERSION /opt/zookeeper
