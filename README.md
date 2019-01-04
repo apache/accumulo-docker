@@ -33,9 +33,13 @@ building an image:
         cd /path/to/accumulo-docker
         docker build -t accumulo .
 
-   Or build the Accumulo docker image with specific versions of Hadoop, Zookeeper, etc using the command below:
+   Or build the Accumulo docker image with specific released versions of Hadoop, Zookeeper, etc that will downloaded from Apache using the command below:
 
         docker build --build-arg ZOOKEEPER_VERSION=3.4.8 --build-arg HADOOP_VERSION=2.7.0 -t accumulo .
+
+   Or build with an Accumulo tarball (located in same directory as DockerFile) using the command below:
+
+        docker build --build-arg ACCUMULO_VERSION=2.0.0-SNAPSHOT --build-arg ACCUMULO_FILE=accumulo-2.0.0-SNAPSHOT-bin.tar.gz -t accumulo .
 
 ## Image basics
 
