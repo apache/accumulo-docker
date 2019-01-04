@@ -18,14 +18,13 @@ FROM centos:7
 RUN yum install -y java-1.8.0-openjdk-devel make gcc-c++ wget
 ENV JAVA_HOME /usr/lib/jvm/java-1.8.0-openjdk
 
-ARG HADOOP_VERSION
-ARG HADOOP_USER_NAME
-ARG ZOOKEEPER_VERSION
+ARG ACCUMULO_VERSION=2.0.0-alpha-1
+ARG HADOOP_VERSION=3.1.1
+ARG ZOOKEEPER_VERSION=3.4.13
+ARG HADOOP_USER_NAME=accumulo
+ARG ACCUMULO_FILE=
 
-ENV HADOOP_VERSION ${HADOOP_VERSION:-3.1.1}
-ENV HADOOP_USER_NAME ${HADOOP_USER_NAME:-accumulo}
-ENV ZOOKEEPER_VERSION ${ZOOKEEPER_VERSION:-3.4.13}
-ENV ACCUMULO_VERSION 2.0.0-alpha-1
+ENV HADOOP_USER_NAME $HADOOP_USER_NAME
 
 ENV APACHE_DIST_URLS \
   https://www.apache.org/dyn/closer.cgi?action=download&filename= \
@@ -33,6 +32,8 @@ ENV APACHE_DIST_URLS \
   https://www-us.apache.org/dist/ \
   https://www.apache.org/dist/ \
   https://archive.apache.org/dist/
+
+COPY README.md $ACCUMULO_FILE /tmp/
 
 RUN set -eux; \
   download() { \
@@ -49,9 +50,13 @@ RUN set -eux; \
     [ -n "$success" ]; \
   }; \
   \
-  download "accumulo.tar.gz" "accumulo/$ACCUMULO_VERSION/accumulo-$ACCUMULO_VERSION-bin.tar.gz"; \
   download "hadoop.tar.gz" "hadoop/core/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz"; \
-  download "zookeeper.tar.gz" "zookeeper/zookeeper-$ZOOKEEPER_VERSION/zookeeper-$ZOOKEEPER_VERSION.tar.gz"
+  download "zookeeper.tar.gz" "zookeeper/zookeeper-$ZOOKEEPER_VERSION/zookeeper-$ZOOKEEPER_VERSION.tar.gz"; \
+  if [ -z "$ACCUMULO_FILE" ]; then \
+    download "accumulo.tar.gz" "accumulo/$ACCUMULO_VERSION/accumulo-$ACCUMULO_VERSION-bin.tar.gz"; \
+  else \
+    cp "/tmp/$ACCUMULO_FILE" "accumulo.tar.gz"; \
+  fi
 
 RUN tar xzf accumulo.tar.gz -C /tmp/
 RUN tar xzf hadoop.tar.gz -C /tmp/
