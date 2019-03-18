@@ -18,11 +18,13 @@ FROM centos:7
 RUN yum install -y java-1.8.0-openjdk-devel make gcc-c++ wget
 ENV JAVA_HOME /usr/lib/jvm/java-1.8.0-openjdk
 
-ARG ACCUMULO_VERSION=2.0.0-alpha-1
-ARG HADOOP_VERSION=3.1.1
+ARG ACCUMULO_VERSION=1.9.2
+ARG HADOOP_VERSION=2.8.5
 ARG ZOOKEEPER_VERSION=3.4.13
 ARG HADOOP_USER_NAME=accumulo
 ARG ACCUMULO_FILE=
+ARG HADOOP_FILE=
+ARG ZOOKEEPER_FILE=
 
 ENV HADOOP_USER_NAME $HADOOP_USER_NAME
 
@@ -33,7 +35,7 @@ ENV APACHE_DIST_URLS \
   https://www.apache.org/dist/ \
   https://archive.apache.org/dist/
 
-COPY README.md $ACCUMULO_FILE /tmp/
+COPY README.md $ACCUMULO_FILE $HADOOP_FILE $ZOOKEEPER_FILE /tmp/
 
 RUN set -eux; \
   download() { \
@@ -50,13 +52,21 @@ RUN set -eux; \
     [ -n "$success" ]; \
   }; \
   \
-  download "hadoop.tar.gz" "hadoop/core/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz"; \
-  download "zookeeper.tar.gz" "zookeeper/zookeeper-$ZOOKEEPER_VERSION/zookeeper-$ZOOKEEPER_VERSION.tar.gz"; \
+  if [ -z "$HADOOP_FILE" ]; then \
+    download "hadoop.tar.gz" "hadoop/core/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz"; \
+  else \
+    cp "/tmp/$HADOOP_FILE" "hadoop.tar.gz"; \
+  fi; \
+  if [ -z "$ZOOKEEPER_FILE" ]; then \
+    download "zookeeper.tar.gz" "zookeeper/zookeeper-$ZOOKEEPER_VERSION/zookeeper-$ZOOKEEPER_VERSION.tar.gz"; \
+  else \
+    cp "/tmp/$ZOOKEEPER_FILE" "zookeeper.tar.gz"; \
+  fi; \
   if [ -z "$ACCUMULO_FILE" ]; then \
     download "accumulo.tar.gz" "accumulo/$ACCUMULO_VERSION/accumulo-$ACCUMULO_VERSION-bin.tar.gz"; \
   else \
     cp "/tmp/$ACCUMULO_FILE" "accumulo.tar.gz"; \
-  fi
+  fi;
 
 RUN tar xzf accumulo.tar.gz -C /tmp/
 RUN tar xzf hadoop.tar.gz -C /tmp/
@@ -66,11 +76,12 @@ RUN mv /tmp/hadoop-$HADOOP_VERSION /opt/hadoop
 RUN mv /tmp/zookeeper-$ZOOKEEPER_VERSION /opt/zookeeper
 RUN mv /tmp/accumulo-$ACCUMULO_VERSION /opt/accumulo
 
-RUN /opt/accumulo/bin/accumulo-util build-native
+RUN cp /opt/accumulo/conf/examples/2GB/native-standalone/* /opt/accumulo/conf/
+RUN /opt/accumulo/bin/build_native_library.sh
 
-ADD ./accumulo.properties /opt/accumulo/conf
-ADD ./log4j-service.properties /opt/accumulo/conf
-ADD ./log4j-monitor.properties /opt/accumulo/conf
+ADD ./accumulo-site.xml /opt/accumulo/conf
+ADD ./generic_logger.xml /opt/accumulo/conf
+ADD ./monitor_logger.xml /opt/accumulo/conf
 
 ENV HADOOP_HOME /opt/hadoop
 ENV ZOOKEEPER_HOME /opt/zookeeper
