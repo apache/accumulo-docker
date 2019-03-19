@@ -23,6 +23,8 @@ ARG HADOOP_VERSION=3.1.1
 ARG ZOOKEEPER_VERSION=3.4.13
 ARG HADOOP_USER_NAME=accumulo
 ARG ACCUMULO_FILE=
+ARG HADOOP_FILE=
+ARG ZOOKEEPER_FILE=
 
 ENV HADOOP_USER_NAME $HADOOP_USER_NAME
 
@@ -33,7 +35,7 @@ ENV APACHE_DIST_URLS \
   https://www.apache.org/dist/ \
   https://archive.apache.org/dist/
 
-COPY README.md $ACCUMULO_FILE /tmp/
+COPY README.md $ACCUMULO_FILE $HADOOP_FILE $ZOOKEEPER_FILE /tmp/
 
 RUN set -eux; \
   download() { \
@@ -50,8 +52,16 @@ RUN set -eux; \
     [ -n "$success" ]; \
   }; \
   \
-  download "hadoop.tar.gz" "hadoop/core/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz"; \
-  download "zookeeper.tar.gz" "zookeeper/zookeeper-$ZOOKEEPER_VERSION/zookeeper-$ZOOKEEPER_VERSION.tar.gz"; \
+  if [ -z "$HADOOP_FILE" ]; then \
+    download "hadoop.tar.gz" "hadoop/core/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz"; \
+  else \
+    cp "/tmp/$HADOOP_FILE" "hadoop.tar.gz"; \
+  fi; \
+  if [ -z "$ZOOKEEPER_FILE" ]; then \
+    download "zookeeper.tar.gz" "zookeeper/zookeeper-$ZOOKEEPER_VERSION/zookeeper-$ZOOKEEPER_VERSION.tar.gz"; \
+  else \
+    cp "/tmp/$ZOOKEEPER_FILE" "zookeeper.tar.gz"; \
+  fi; \
   if [ -z "$ACCUMULO_FILE" ]; then \
     download "accumulo.tar.gz" "accumulo/$ACCUMULO_VERSION/accumulo-$ACCUMULO_VERSION-bin.tar.gz"; \
   else \
