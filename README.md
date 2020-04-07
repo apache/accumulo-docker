@@ -18,7 +18,7 @@ While it is easier to pull from DockerHub, the image will default to the softwar
 |-------------|---------------|
 | [Accumulo]  | 2.0.0         |
 | [Hadoop]    | 3.2.1         |
-| [Zookeeper] | 3.6.0         |
+| [ZooKeeper] | 3.6.0         |
 
 If these versions do not match what is running on your cluster, you should consider building
 your own image with matching versions. However, Accumulo must be 2.0.0+. Below are instructions for
@@ -138,4 +138,4 @@ of tablet servers that you want to run.
 
 [Accumulo]: https://accumulo.apache.org/
 [Hadoop]: https://hadoop.apache.org/
-[Zookeeper]: https://zookeeper.apache.org/
+[ZooKeeper]: https://zookeeper.apache.org/
