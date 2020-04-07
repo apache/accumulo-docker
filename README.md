@@ -1,8 +1,6 @@
 # Apache Accumulo Docker Image
 
-**This is currently a work in progress that depends on unreleased features of Accumulo and will not be ready
-for use until after Accumulo 2.0.0 is released.**  Sometime after Accumulo 2.0.0 is released this project
-will make its first release. Eventually, this will project will create a `apache/accumulo` image at DockerHub.
+This is the first release of this project. Eventually, this project will create an `apache/accumulo` image at DockerHub.
 Until then, you will need to build your own image. The master branch of this repo creates a Docker image for
 Accumulo 2.0+. If you want to create a Docker image for Accumulo 1.9, there is a
 [1.9 branch](https://github.com/apache/accumulo-docker/tree/1.9) for that.
@@ -18,9 +16,9 @@ While it is easier to pull from DockerHub, the image will default to the softwar
 
 | Software    | Version       |
 |-------------|---------------|
-| [Accumulo]  | 2.0.0-alpha-1 |
-| [Hadoop]    | 3.1.1         |
-| [Zookeeper] | 3.4.13        |
+| [Accumulo]  | 2.0.0         |
+| [Hadoop]    | 3.2.1         |
+| [Zookeeper] | 3.6.0         |
 
 If these versions do not match what is running on your cluster, you should consider building
 your own image with matching versions. However, Accumulo must be 2.0.0+. Below are instructions for

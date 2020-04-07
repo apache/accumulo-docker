@@ -18,9 +18,9 @@ FROM centos:7
 RUN yum install -y java-1.8.0-openjdk-devel make gcc-c++ wget
 ENV JAVA_HOME /usr/lib/jvm/java-1.8.0-openjdk
 
-ARG ACCUMULO_VERSION=2.0.0-alpha-1
-ARG HADOOP_VERSION=3.1.1
-ARG ZOOKEEPER_VERSION=3.4.13
+ARG ACCUMULO_VERSION=2.0.0
+ARG HADOOP_VERSION=3.2.1
+ARG ZOOKEEPER_VERSION=3.6.0
 ARG HADOOP_USER_NAME=accumulo
 ARG ACCUMULO_FILE=
 ARG HADOOP_FILE=
@@ -58,9 +58,9 @@ RUN set -eux; \
     cp "/tmp/$HADOOP_FILE" "hadoop.tar.gz"; \
   fi; \
   if [ -z "$ZOOKEEPER_FILE" ]; then \
-    download "zookeeper.tar.gz" "zookeeper/zookeeper-$ZOOKEEPER_VERSION/zookeeper-$ZOOKEEPER_VERSION.tar.gz"; \
+    download "zookeeper.tar.gz" "zookeeper/zookeeper-$ZOOKEEPER_VERSION/apache-zookeeper-$ZOOKEEPER_VERSION.tar.gz"; \
   else \
-    cp "/tmp/$ZOOKEEPER_FILE" "zookeeper.tar.gz"; \
+    cp "/tmp/$ZOOKEEPER_FILE" "apache-zookeeper.tar.gz"; \
   fi; \
   if [ -z "$ACCUMULO_FILE" ]; then \
     download "accumulo.tar.gz" "accumulo/$ACCUMULO_VERSION/accumulo-$ACCUMULO_VERSION-bin.tar.gz"; \
@@ -73,7 +73,7 @@ RUN tar xzf hadoop.tar.gz -C /tmp/
 RUN tar xzf zookeeper.tar.gz -C /tmp/
 
 RUN mv /tmp/hadoop-$HADOOP_VERSION /opt/hadoop
-RUN mv /tmp/zookeeper-$ZOOKEEPER_VERSION /opt/zookeeper
+RUN mv /tmp/apache-zookeeper-$ZOOKEEPER_VERSION /opt/zookeeper
 RUN mv /tmp/accumulo-$ACCUMULO_VERSION /opt/accumulo
 
 RUN /opt/accumulo/bin/accumulo-util build-native
