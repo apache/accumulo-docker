@@ -58,7 +58,7 @@ RUN set -eux; \
     cp "/tmp/$HADOOP_FILE" "hadoop.tar.gz"; \
   fi; \
   if [ -z "$ZOOKEEPER_FILE" ]; then \
-    download "zookeeper.tar.gz" "zookeeper/zookeeper-$ZOOKEEPER_VERSION/apache-zookeeper-$ZOOKEEPER_VERSION.tar.gz"; \
+    download "zookeeper.tar.gz" "zookeeper/zookeeper-$ZOOKEEPER_VERSION/apache-zookeeper-$ZOOKEEPER_VERSION-bin.tar.gz"; \
   else \
     cp "/tmp/$ZOOKEEPER_FILE" "apache-zookeeper.tar.gz"; \
   fi; \
@@ -73,7 +73,7 @@ RUN tar xzf hadoop.tar.gz -C /tmp/
 RUN tar xzf zookeeper.tar.gz -C /tmp/
 
 RUN mv /tmp/hadoop-$HADOOP_VERSION /opt/hadoop
-RUN mv /tmp/apache-zookeeper-$ZOOKEEPER_VERSION /opt/zookeeper
+RUN mv /tmp/apache-zookeeper-$ZOOKEEPER_VERSION-bin /opt/zookeeper
 RUN mv /tmp/accumulo-$ACCUMULO_VERSION /opt/accumulo
 
 RUN /opt/accumulo/bin/accumulo-util build-native
