@@ -79,6 +79,7 @@ RUN mv /tmp/accumulo-$ACCUMULO_VERSION /opt/accumulo
 RUN /opt/accumulo/bin/accumulo-util build-native
 
 ADD ./accumulo.properties /opt/accumulo/conf
+ADD ./accumulo-env.sh /opt/accumulo/conf
 ADD ./log4j-service.properties /opt/accumulo/conf
 ADD ./log4j-monitor.properties /opt/accumulo/conf
 
