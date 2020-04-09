@@ -78,8 +78,10 @@ RUN mv /tmp/accumulo-$ACCUMULO_VERSION /opt/accumulo
 
 RUN /opt/accumulo/bin/accumulo-util build-native
 
+# The below line is required for Accumulo 2.0 to work with ZK 3.5 & above. 
+RUN sed -i 's/\${ZOOKEEPER_HOME}\/\*/\${ZOOKEEPER_HOME}\/\*\:\${ZOOKEEPER_HOME}\/lib\/\*/g' /opt/accumulo/conf/accumulo-env.sh
+
 ADD ./accumulo.properties /opt/accumulo/conf
-ADD ./accumulo-env.sh /opt/accumulo/conf
 ADD ./log4j-service.properties /opt/accumulo/conf
 ADD ./log4j-monitor.properties /opt/accumulo/conf
 
