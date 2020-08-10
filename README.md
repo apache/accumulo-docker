@@ -1,7 +1,7 @@
 # Apache Accumulo Docker Image
 
 This is the first release of this project. Eventually, this project will create an `apache/accumulo` image at DockerHub.
-Until then, you will need to build your own image. The master branch of this repo creates a Docker image for
+Until then, you will need to build your own image. The main branch of this repo creates a Docker image for
 Accumulo 2.0+. If you want to create a Docker image for Accumulo 1.9, there is a
 [1.9 branch](https://github.com/apache/accumulo-docker/tree/1.9) for that.
 
