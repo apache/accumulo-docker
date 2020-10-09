@@ -1,0 +1,8 @@
+.git/
+CONTRIBUTING.md
+Dockerfile
+LICENSE
+NOTICE
+.asf.yml
+.dockerignore
+.gitignore
