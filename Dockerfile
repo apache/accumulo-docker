@@ -15,7 +15,6 @@
 
 FROM centos:7
 
-RUN yum install -y java-1.8.0-openjdk-devel make gcc-c++ wget
 ENV JAVA_HOME /usr/lib/jvm/java-1.8.0-openjdk
 
 ARG ACCUMULO_VERSION=2.0.0
@@ -37,7 +36,8 @@ ENV APACHE_DIST_URLS \
 
 COPY README.md $ACCUMULO_FILE $HADOOP_FILE $ZOOKEEPER_FILE /tmp/
 
-RUN set -eux; \
+RUN yum install -y java-1.8.0-openjdk-devel make gcc-c++ wget && \
+  set -eux; \
   download() { \
     local f="$1"; shift; \
     local distFile="$1"; shift; \
@@ -66,24 +66,18 @@ RUN set -eux; \
     download "accumulo.tar.gz" "accumulo/$ACCUMULO_VERSION/accumulo-$ACCUMULO_VERSION-bin.tar.gz"; \
   else \
     cp "/tmp/$ACCUMULO_FILE" "accumulo.tar.gz"; \
-  fi
-
-RUN tar xzf accumulo.tar.gz -C /tmp/
-RUN tar xzf hadoop.tar.gz -C /tmp/
-RUN tar xzf zookeeper.tar.gz -C /tmp/
-
-RUN mv /tmp/hadoop-$HADOOP_VERSION /opt/hadoop
-RUN mv /tmp/apache-zookeeper-$ZOOKEEPER_VERSION-bin /opt/zookeeper
-RUN mv /tmp/accumulo-$ACCUMULO_VERSION /opt/accumulo
-
-RUN /opt/accumulo/bin/accumulo-util build-native
-
+  fi && \
+  tar xzf accumulo.tar.gz -C /tmp/ && \
+  tar xzf hadoop.tar.gz -C /tmp/ && \
+  tar xzf zookeeper.tar.gz -C /tmp/ && \
+  mv /tmp/hadoop-$HADOOP_VERSION /opt/hadoop && \
+  mv /tmp/apache-zookeeper-$ZOOKEEPER_VERSION-bin /opt/zookeeper && \
+  mv /tmp/accumulo-$ACCUMULO_VERSION /opt/accumulo && \
+  /opt/accumulo/bin/accumulo-util build-native && \
 # The below line is required for Accumulo 2.0 to work with ZK 3.5 & above.  This will not be needed for Accumulo 2.1
-RUN sed -i 's/\${ZOOKEEPER_HOME}\/\*/\${ZOOKEEPER_HOME}\/\*\:\${ZOOKEEPER_HOME}\/lib\/\*/g' /opt/accumulo/conf/accumulo-env.sh
+  sed -i 's/\${ZOOKEEPER_HOME}\/\*/\${ZOOKEEPER_HOME}\/\*\:\${ZOOKEEPER_HOME}\/lib\/\*/g' /opt/accumulo/conf/accumulo-env.sh
 
-ADD ./accumulo.properties /opt/accumulo/conf
-ADD ./log4j-service.properties /opt/accumulo/conf
-ADD ./log4j-monitor.properties /opt/accumulo/conf
+ADD properties/ /opt/accumulo/conf/
 
 ENV HADOOP_HOME /opt/hadoop
 ENV ZOOKEEPER_HOME /opt/zookeeper
