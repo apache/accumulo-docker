@@ -60,7 +60,7 @@ RUN yum install -y java-1.8.0-openjdk-devel make gcc-c++ wget && \
   if [ -z "$ZOOKEEPER_FILE" ]; then \
     download "zookeeper.tar.gz" "zookeeper/zookeeper-$ZOOKEEPER_VERSION/apache-zookeeper-$ZOOKEEPER_VERSION-bin.tar.gz"; \
   else \
-    cp "/tmp/$ZOOKEEPER_FILE" "apache-zookeeper.tar.gz"; \
+    cp "/tmp/$ZOOKEEPER_FILE" "zookeeper.tar.gz"; \
   fi; \
   if [ -z "$ACCUMULO_FILE" ]; then \
     download "accumulo.tar.gz" "accumulo/$ACCUMULO_VERSION/accumulo-$ACCUMULO_VERSION-bin.tar.gz"; \
