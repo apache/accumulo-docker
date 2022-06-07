@@ -16,9 +16,9 @@ While it is easier to pull from DockerHub, the image will default to the softwar
 
 | Software    | Version       |
 |-------------|---------------|
-| [Accumulo]  | 2.0.0         |
-| [Hadoop]    | 3.2.1         |
-| [ZooKeeper] | 3.6.0         |
+| [Accumulo]  | 2.1.0         |
+| [Hadoop]    | 3.3.0         |
+| [ZooKeeper] | 3.7.1         |
 
 If these versions do not match what is running on your cluster, you should consider building
 your own image with matching versions. However, Accumulo must be 2.0.0+. Below are instructions for

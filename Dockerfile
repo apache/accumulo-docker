@@ -19,7 +19,7 @@ ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk
 
 ARG ACCUMULO_VERSION=2.1.0
 ARG HADOOP_VERSION=3.3.0
-ARG ZOOKEEPER_VERSION=3.6.0
+ARG ZOOKEEPER_VERSION=3.7.1
 ARG HADOOP_USER_NAME=accumulo
 ARG ACCUMULO_FILE=
 ARG HADOOP_FILE=
@@ -36,7 +36,8 @@ ENV APACHE_DIST_URLS \
 
 COPY README.md $ACCUMULO_FILE $HADOOP_FILE $ZOOKEEPER_FILE /tmp/
 
-RUN yum install -y java-11-openjdk-devel make gcc-c++ wget && \
+RUN yum -y update && \
+  yum install -y java-11-openjdk-devel make gcc-c++ wget && \
   set -eux; \
   download() { \
     local f="$1"; shift; \
