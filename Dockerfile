@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM centos:7
+FROM rockylinux:9
 
 ARG ACCUMULO_VERSION=2.1.0
 ARG HADOOP_VERSION=3.3.3
