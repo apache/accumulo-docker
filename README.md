@@ -17,7 +17,7 @@ While it is easier to pull from DockerHub, the image will default to the softwar
 | Software    | Version       |
 |-------------|---------------|
 | [Accumulo]  | 2.1.0         |
-| [Hadoop]    | 3.3.0         |
+| [Hadoop]    | 3.3.3         |
 | [ZooKeeper] | 3.7.1         |
 
 If these versions do not match what is running on your cluster, you should consider building

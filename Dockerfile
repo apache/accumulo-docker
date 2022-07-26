@@ -16,7 +16,7 @@
 FROM centos:7
 
 ARG ACCUMULO_VERSION=2.1.0
-ARG HADOOP_VERSION=3.3.0
+ARG HADOOP_VERSION=3.3.3
 ARG ZOOKEEPER_VERSION=3.7.1
 ARG HADOOP_USER_NAME=accumulo
 ARG ACCUMULO_FILE=
@@ -71,7 +71,7 @@ RUN yum install -y ca-certificates java-11-openjdk-devel make gcc-c++ wget && \
   tar xzf zookeeper.tar.gz -C /tmp/ && \
   mv /tmp/hadoop-$HADOOP_VERSION /opt/hadoop && \
   mv /tmp/apache-zookeeper-$ZOOKEEPER_VERSION-bin /opt/zookeeper && \
-  mv /tmp/accumulo-$ACCUMULO_VERSION /opt/accumulo && \
+  mv /tmp/accumulo-$ACCUMULO_VERSION* /opt/accumulo && \
   rm -f accumulo.tar.gz hadoop.tar.gz zookeeper.tar.gz && \
   rm -rf /opt/hadoop/share/doc/hadoop && \
   /opt/accumulo/bin/accumulo-util build-native
