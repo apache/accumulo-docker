@@ -78,7 +78,7 @@ RUN yum install -y ca-certificates java-11-openjdk-devel make gcc-c++ wget && \
 
 ADD properties/ /opt/accumulo/conf/
 
-ENV HADOOP_HOME=/opt/hadoop ZOOKEEPER_HOME=/opt/zookeeper ACCUMULO_HOME=/opt/accumulo PATH="$PATH:$ACCUMULO_HOME/bin"
+ENV HADOOP_HOME=/opt/hadoop ZOOKEEPER_HOME=/opt/zookeeper ACCUMULO_HOME=/opt/accumulo PATH="$PATH:/opt/accumulo/bin"
 
 ENTRYPOINT ["accumulo"]
 CMD ["help"]
