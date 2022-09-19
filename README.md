@@ -39,7 +39,7 @@ building an image:
 
    Or build with an Accumulo tarball (located in same directory as DockerFile) using the command below:
 
-        docker build --build-arg ACCUMULO_VERSION=2.0.0-SNAPSHOT --build-arg ACCUMULO_FILE=accumulo-2.0.0-SNAPSHOT-bin.tar.gz -t accumulo .
+        docker build --build-arg --build-arg ACCUMULO_FILE=accumulo-2.0.0-SNAPSHOT-bin.tar.gz -t accumulo .
 
 ## Image basics
 
