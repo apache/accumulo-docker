@@ -54,7 +54,7 @@ COPY download.sh ${HADOOP_FILE}* /tmp/
 RUN set -eux; \
   download.sh "${HADOOP_FILE}" "hadoop.tar.gz" "hadoop/core/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz"; \
   tar xzf hadoop.tar.gz -C /tmp/; \
-  mv /tmp/hadoop-$HADOOP_VERSION /opt/hadoop; \
+  mv /tmp/hadoop-*/ /opt/hadoop; \
   rm -rf /opt/hadoop/share/doc/hadoop
 
 ##
@@ -74,7 +74,7 @@ COPY download.sh ${ZOOKEEPER_FILE}* /tmp/
 RUN set -eux; \
   download.sh "${ZOOKEEPER_FILE}" "zookeeper.tar.gz" "zookeeper/zookeeper-$ZOOKEEPER_VERSION/apache-zookeeper-$ZOOKEEPER_VERSION-bin.tar.gz"; \
   tar xzf zookeeper.tar.gz -C /tmp/; \
-  mv /tmp/apache-zookeeper-$ZOOKEEPER_VERSION-bin /opt/zookeeper
+  mv /tmp/apache-zookeeper-*/ /opt/zookeeper
 
 ##
 ## Accumulo image. Download/copy and extract the Accumulo installation, build native libs, and copy in properties.
@@ -95,7 +95,7 @@ COPY download.sh ${ACCUMULO_FILE}* /tmp/
 RUN set -eux; \
   download.sh "${ACCUMULO_FILE}" "accumulo.tar.gz" "accumulo/$ACCUMULO_VERSION/accumulo-$ACCUMULO_VERSION-bin.tar.gz"; \
   tar xzf accumulo.tar.gz -C /tmp/; \
-  mv /tmp/accumulo-$ACCUMULO_VERSION*/ /opt/accumulo; \
+  mv /tmp/accumulo-*/ /opt/accumulo; \
   /opt/accumulo/bin/accumulo-util build-native
 
 ADD properties/ /opt/accumulo/conf/

@@ -44,9 +44,10 @@ existing_file=$1
 download_file=$2
 dist_file=$3
 
-if [ -f "/tmp/$existing_file" ]; then
+if [[ "$existing_file" == "_NOT_SET" ]]; then
+  download "$download_file" "$dist_file"
+else
+  [ -f "/tmp/$existing_file" ] || { echo "Existing file $existing_file does not exist"; exit 1; }
   echo "Skipping download of $existing_file"
   mv "/tmp/$existing_file" "$download_file"
-else
-  download "$download_file" "$dist_file"
 fi
