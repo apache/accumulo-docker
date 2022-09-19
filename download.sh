@@ -25,15 +25,28 @@ APACHE_DIST_URLS=(
   "https://archive.apache.org/dist/"
 )
 
-f="$1"; shift;
-distFile="$1"; shift;
-success=;
-distUrl=;
-for distUrl in "${APACHE_DIST_URLS[@]}"; do
-    echo "Attempting to fetch $distFile from $distUrl"
+download() {
+  local f="$1"; shift
+  local distFile="$1"; shift
+  local success=
+  local distUrl=
+  for distUrl in "${APACHE_DIST_URLS[@]}"; do
+    echo "Attempting to fetch $f from $distUrl$distFile"
     if wget -nv -O "$f" "$distUrl$distFile"; then
-    success=1;
-    break;
-    fi;
-done
-[ -n "$success" ]
+      success=1
+      break
+    fi
+  done
+  [ -n "$success" ]
+}
+
+existing_file=$1
+download_file=$2
+dist_file=$3
+
+if [ -f "/tmp/$existing_file" ]; then
+  echo "Skipping download of $existing_file"
+  mv "/tmp/$existing_file" "$download_file"
+else
+  download "$download_file" "$dist_file"
+fi
