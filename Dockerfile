@@ -15,70 +15,70 @@
 
 FROM rockylinux:9
 
-ARG ACCUMULO_VERSION=2.1.0
-ARG HADOOP_VERSION=3.3.3
-ARG ZOOKEEPER_VERSION=3.8.0
-ARG HADOOP_USER_NAME=accumulo
-ARG ACCUMULO_FILE=
-ARG HADOOP_FILE=
-ARG ZOOKEEPER_FILE=
+ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk
+ARG HADOOP_VERSION=3.3.3 \
+  ZOOKEEPER_VERSION=3.8.0 \
+  HADOOP_FILE=_NOT_SET \
+  ZOOKEEPER_FILE=_NOT_SET
 
-ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk HADOOP_USER_NAME=$HADOOP_USER_NAME
-
-ENV APACHE_DIST_URLS \
-  https://www.apache.org/dyn/closer.cgi?action=download&filename= \
-# if the version is outdated (or we're grabbing the .asc file), we might have to pull from the dist/archive :/
-  https://www-us.apache.org/dist/ \
-  https://www.apache.org/dist/ \
-  https://archive.apache.org/dist/
-
-COPY README.md $ACCUMULO_FILE $HADOOP_FILE $ZOOKEEPER_FILE /tmp/
+# Copy a known file along with the optional files (that might not exist).
+# The known file, along with '*' for the optional files allows the command
+# to succeed even if the optional files do not exist. If we used an empty
+# string for the optional files default value, then this command would copy
+# the entire build context, which is not what we want.
+COPY asf_download.sh ${HADOOP_FILE}* ${ZOOKEEPER_FILE}* /tmp/
 
 RUN yum install -y ca-certificates java-11-openjdk-devel make gcc-c++ wget && \
   update-ca-trust extract && \
   set -eux; \
-  download() { \
-    local f="$1"; shift; \
-    local distFile="$1"; shift; \
-    local success=; \
-    local distUrl=; \
-    for distUrl in $APACHE_DIST_URLS; do \
-      if wget -nv -O "$f" "$distUrl$distFile"; then \
-        success=1; \
-        break; \
-      fi; \
-    done; \
-    [ -n "$success" ]; \
-  }; \
   \
-  if [ -z "$HADOOP_FILE" ]; then \
-    download "hadoop.tar.gz" "hadoop/core/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz"; \
+  if [ "$HADOOP_FILE" == "_NOT_SET" ]; then \
+    /tmp/asf_download.sh "hadoop.tar.gz" "hadoop/core/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz"; \
   else \
     mv "/tmp/$HADOOP_FILE" "hadoop.tar.gz"; \
   fi; \
-  if [ -z "$ZOOKEEPER_FILE" ]; then \
-    download "zookeeper.tar.gz" "zookeeper/zookeeper-$ZOOKEEPER_VERSION/apache-zookeeper-$ZOOKEEPER_VERSION-bin.tar.gz"; \
+  if [ "$ZOOKEEPER_FILE" == "_NOT_SET" ]; then \
+    /tmp/asf_download.sh "zookeeper.tar.gz" "zookeeper/zookeeper-$ZOOKEEPER_VERSION/apache-zookeeper-$ZOOKEEPER_VERSION-bin.tar.gz"; \
   else \
     mv "/tmp/$ZOOKEEPER_FILE" "zookeeper.tar.gz"; \
   fi; \
-  if [ -z "$ACCUMULO_FILE" ]; then \
-    download "accumulo.tar.gz" "accumulo/$ACCUMULO_VERSION/accumulo-$ACCUMULO_VERSION-bin.tar.gz"; \
-  else \
-    mv "/tmp/$ACCUMULO_FILE" "accumulo.tar.gz"; \
-  fi && \
-  tar xzf accumulo.tar.gz -C /tmp/ && \
   tar xzf hadoop.tar.gz -C /tmp/ && \
   tar xzf zookeeper.tar.gz -C /tmp/ && \
   mv /tmp/hadoop-$HADOOP_VERSION /opt/hadoop && \
   mv /tmp/apache-zookeeper-$ZOOKEEPER_VERSION-bin /opt/zookeeper && \
-  mv /tmp/accumulo-$ACCUMULO_VERSION* /opt/accumulo && \
-  rm -f accumulo.tar.gz hadoop.tar.gz zookeeper.tar.gz && \
-  rm -rf /opt/hadoop/share/doc/hadoop && \
+  rm -f hadoop.tar.gz zookeeper.tar.gz && \
+  rm -rf /opt/hadoop/share/doc/hadoop
+
+ARG ACCUMULO_VERSION=2.1.0 \
+  ACCUMULO_FILE=_NOT_SET
+# Copy a known file along with the optional files (that might not exist).
+# The known file, along with '*' for the optional files allows the command
+# to succeed even if the optional files do not exist. If we used an empty
+# string for the optional files default value, then this command would copy
+# the entire build context, which is not what we want.
+COPY asf_download.sh ${ACCUMULO_FILE}* /tmp/
+
+RUN set -eux; \
+  \
+  if [ "$ACCUMULO_FILE" == "_NOT_SET" ]; then \
+    /tmp/asf_download.sh "accumulo.tar.gz" "accumulo/$ACCUMULO_VERSION/accumulo-$ACCUMULO_VERSION-bin.tar.gz"; \
+  else \
+    mv "/tmp/$ACCUMULO_FILE" "accumulo.tar.gz"; \
+  fi && \
+  rm /tmp/asf_download.sh && \
+  tar xzf accumulo.tar.gz -C /tmp/ && \
+  mv /tmp/accumulo-$ACCUMULO_VERSION*/ /opt/accumulo && \
+  rm -f accumulo.tar.gz && \
   /opt/accumulo/bin/accumulo-util build-native
 
 ADD properties/ /opt/accumulo/conf/
 
-ENV HADOOP_HOME=/opt/hadoop ZOOKEEPER_HOME=/opt/zookeeper ACCUMULO_HOME=/opt/accumulo PATH="$PATH:/opt/accumulo/bin"
+ARG HADOOP_USER_NAME=accumulo
+ENV HADOOP_HOME=/opt/hadoop \
+  HADOOP_USER_NAME=$HADOOP_USER_NAME \
+  ZOOKEEPER_HOME=/opt/zookeeper \
+  ACCUMULO_HOME=/opt/accumulo \
+  PATH="$PATH:/opt/accumulo/bin"
 
 ENTRYPOINT ["accumulo"]
 CMD ["help"]
