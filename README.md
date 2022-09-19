@@ -18,7 +18,7 @@ While it is easier to pull from DockerHub, the image will default to the softwar
 |-------------|---------------|
 | [Accumulo]  | 2.1.0         |
 | [Hadoop]    | 3.3.3         |
-| [ZooKeeper] | 3.7.1         |
+| [ZooKeeper] | 3.8.0         |
 
 If these versions do not match what is running on your cluster, you should consider building
 your own image with matching versions. However, Accumulo must be 2.0.0+. Below are instructions for
@@ -39,7 +39,7 @@ building an image:
 
    Or build with an Accumulo tarball (located in same directory as DockerFile) using the command below:
 
-        docker build --build-arg ACCUMULO_VERSION=2.0.0-SNAPSHOT --build-arg ACCUMULO_FILE=accumulo-2.0.0-SNAPSHOT-bin.tar.gz -t accumulo .
+        docker build --build-arg --build-arg ACCUMULO_FILE=accumulo-2.0.0-SNAPSHOT-bin.tar.gz -t accumulo .
 
 ## Image basics
 
