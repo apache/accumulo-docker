@@ -32,6 +32,8 @@ RUN yum install -y ca-certificates java-11-openjdk-devel make gcc-c++ wget && \
   mv /tmp/apache-zookeeper-*-bin /opt/zookeeper && \
   rm -rf /opt/hadoop/share/doc/hadoop
 
+# Accumulo is built in a different run command so that rebuilding for a new
+# Accumulo snapshot tarball is faster.
 ARG ACCUMULO_FILE=accumulo.tar.gz
 COPY $ACCUMULO_FILE /tmp/
 
