@@ -41,7 +41,7 @@ COPY download.sh /usr/local/bin/
 ##
 FROM buildbase as hadoop
 
-ARG HADOOP_VERSION=3.3.3 \
+ARG HADOOP_VERSION=3.3.4 \
   HADOOP_FILE=_NOT_SET
 
 # Copy a known file along with the optional files (that might not exist).
