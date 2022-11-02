@@ -1,5 +1,5 @@
 .git/
-CONTRIBUTING.md
+*.md
 Dockerfile
 LICENSE
 NOTICE
