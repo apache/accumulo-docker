@@ -41,7 +41,7 @@ COPY download.sh /usr/local/bin/
 ##
 FROM buildbase as hadoop
 
-ARG HADOOP_VERSION=3.3.4 \
+ARG HADOOP_VERSION=3.3.6 \
   HADOOP_FILE=_NOT_SET
 
 # Copy a known file along with the optional files (that might not exist).
@@ -62,7 +62,7 @@ RUN set -eux; \
 ##
 FROM buildbase as zookeeper
 
-ARG ZOOKEEPER_VERSION=3.8.0 \
+ARG ZOOKEEPER_VERSION=3.8.2 \
   ZOOKEEPER_FILE=_NOT_SET
 # Copy a known file along with the optional files (that might not exist).
 # The known file, along with '*' for the optional file allows the command
@@ -83,7 +83,7 @@ FROM buildbase as accumulo
 
 ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk
 
-ARG ACCUMULO_VERSION=2.1.0 \
+ARG ACCUMULO_VERSION=2.1.2 \
   ACCUMULO_FILE=_NOT_SET
 # Copy a known file along with the optional files (that might not exist).
 # The known file, along with '*' for the optional file allows the command
