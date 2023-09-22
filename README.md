@@ -39,7 +39,7 @@ building an image:
 
    Or build with an Accumulo tarball (located in same directory as DockerFile) using the command below:
 
-        docker build --build-arg ACCUMULO_FILE=accumulo-2.1.2-SNAPSHOT-bin.tar.gz -t accumulo .
+        docker build --build-arg ACCUMULO_FILE=accumulo-<version>-bin.tar.gz -t accumulo .
 
 ## Image basics
 
@@ -118,7 +118,7 @@ monitor but it can be modified to start other Accumulo services such as
 `master`, `tserver` and `gc`. For tablet servers, set `instances` to the number
 of tablet servers that you want to run.
 
-```
+```json
 {
   "id": "accumulo-monitor",
   "cmd": "accumulo monitor -o instance.secret=mysecret -o instance.volumes=hdfs://localhost:8020/accumulo -o instance.zookeeper.host=localhost:2181",
