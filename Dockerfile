@@ -15,12 +15,12 @@
 
 
 ##
-## Base image. Rocky Linux 9 with updates, JRE 11 headless, and updated CA certs.
+## Base image. Rocky Linux 9 with updates, JRE 17 headless, and updated CA certs.
 ##
 FROM rockylinux:9 as base
 
 RUN set -eux; \
-  yum install -y ca-certificates java-11-openjdk-headless && \
+  yum install -y ca-certificates java-17-openjdk-headless && \
   update-ca-trust extract && \
   yum clean all && \
   rm -rf /var/cache/yum
@@ -31,7 +31,7 @@ RUN set -eux; \
 FROM base as buildbase
 
 RUN set -eux; \
-  yum install -y java-11-openjdk-devel make gcc-c++ wget && \
+  yum install -y java-17-openjdk-devel make gcc-c++ wget && \
   update-ca-trust extract
 
 COPY download.sh /usr/local/bin/
@@ -41,7 +41,7 @@ COPY download.sh /usr/local/bin/
 ##
 FROM buildbase as hadoop
 
-ARG HADOOP_VERSION=3.3.6 \
+ARG HADOOP_VERSION=3.5.0 \
   HADOOP_FILE=_NOT_SET
 
 # Copy a known file along with the optional files (that might not exist).
@@ -62,7 +62,7 @@ RUN set -eux; \
 ##
 FROM buildbase as zookeeper
 
-ARG ZOOKEEPER_VERSION=3.8.2 \
+ARG ZOOKEEPER_VERSION=3.9.5 \
   ZOOKEEPER_FILE=_NOT_SET
 # Copy a known file along with the optional files (that might not exist).
 # The known file, along with '*' for the optional file allows the command
@@ -81,9 +81,9 @@ RUN set -eux; \
 ##
 FROM buildbase as accumulo
 
-ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk
 
-ARG ACCUMULO_VERSION=2.1.2 \
+ARG ACCUMULO_VERSION=4.0.0-SNAPSHOT \
   ACCUMULO_FILE=_NOT_SET
 # Copy a known file along with the optional files (that might not exist).
 # The known file, along with '*' for the optional file allows the command
@@ -107,7 +107,7 @@ ADD properties/ /opt/accumulo/conf/
 FROM base
 
 ARG HADOOP_USER_NAME=accumulo
-ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk \
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk \
   HADOOP_HOME=/opt/hadoop \
   HADOOP_USER_NAME=$HADOOP_USER_NAME \
   ZOOKEEPER_HOME=/opt/zookeeper \
