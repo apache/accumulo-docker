@@ -2,8 +2,9 @@
 
 This is the first release of this project. Eventually, this project will create an `apache/accumulo` image at DockerHub.
 Until then, you will need to build your own image. The main branch of this repo creates a Docker image for
-Accumulo 2.0+. If you want to create a Docker image for Accumulo 1.9, there is a
-[1.9 branch](https://github.com/apache/accumulo-docker/tree/1.9) for that.
+Accumulo 4.0+. If you want to create a Docker image for Accumulo 1.9, there is a
+[1.9 branch](https://github.com/apache/accumulo-docker/tree/1.9) for that. Likewise, there is a 2.1 branch for
+building a 2.1 Docker image.
 
 ## Obtain the Docker image
 
@@ -14,15 +15,15 @@ To obtain the docker image created by this project, you can either pull it from 
 
 While it is easier to pull from DockerHub, the image will default to the software versions below:
 
-| Software    | Version       |
-|-------------|---------------|
-| [Accumulo]  | 2.1.2         |
-| [Hadoop]    | 3.3.6         |
-| [ZooKeeper] | 3.8.2         |
+| Software    | Version         |
+|-------------|-----------------|
+| [Accumulo]  | 4.0.0-SNAPSHOT  |
+| [Hadoop]    | 3.5.0           |
+| [ZooKeeper] | 3.9.5           |
 
 If these versions do not match what is running on your cluster, you should consider building
-your own image with matching versions. However, Accumulo must be 2.0.0+. Below are instructions for
-building an image:
+your own image with matching versions. However, Accumulo must be 4.0.0+ and Hadoop must be 3.5.0+.
+Below are instructions for building an image:
 
 1. Clone the Accumulo docker repo
 
@@ -35,7 +36,7 @@ building an image:
 
    Or build the Accumulo docker image with specific released versions of Hadoop, Zookeeper, etc that will downloaded from Apache using the command below:
 
-        docker build --build-arg ZOOKEEPER_VERSION=3.4.8 --build-arg HADOOP_VERSION=2.7.0 -t accumulo .
+        docker build --build-arg ZOOKEEPER_VERSION=3.9.0 --build-arg HADOOP_VERSION=3.5.0 -t accumulo .
 
    Or build with an Accumulo tarball (located in same directory as DockerFile) using the command below:
 
