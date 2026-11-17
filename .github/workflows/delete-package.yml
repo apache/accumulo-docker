@@ -1,0 +1,113 @@
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: GHCR delete container image
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_image:
+        description: Type the published image name (ghcr.io/owner/repository) to confirm
+        required: true
+        type: string
+      version:
+        description: Image tag or sha256 digest to delete, or ALL to delete the entire package
+        required: true
+        type: string
+
+permissions:
+  packages: write
+
+jobs:
+  delete:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify confirmation
+        env:
+          CONFIRM_IMAGE: ${{ inputs.confirm_image }}
+          REPOSITORY: ${{ github.repository }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          set -eu
+          image="ghcr.io/$(printf '%s' "$REPOSITORY" | tr '[:upper:]' '[:lower:]')"
+          package_name="${image##*/}"
+          if [ "$CONFIRM_IMAGE" != "$image" ]; then
+            echo "Confirmation did not match published image '$image'; nothing was deleted." >&2
+            exit 1
+          fi
+          if [ -z "$VERSION" ]; then
+            echo "A version tag, SHA-256 digest, or ALL must be provided." >&2
+            exit 1
+          fi
+          {
+            echo "PACKAGE_NAME=$package_name"
+            echo "IMAGE=$image"
+          } >> "$GITHUB_ENV"
+
+      - name: Delete package or version from GitHub Container Registry
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OWNER: ${{ github.repository_owner }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          if [ "$VERSION" = "ALL" ]; then
+            echo "Deleting entire package: ${IMAGE}"
+            gh api --method DELETE "/orgs/${OWNER}/packages/container/${PACKAGE_NAME}"
+            exit 0
+          fi
+
+          digest=""
+          if [[ "$VERSION" == sha256:* ]]; then
+            if ! [[ "$VERSION" =~ ^sha256:[0-9a-fA-F]{64}$ ]]; then
+              echo "Invalid SHA-256 digest: $VERSION" >&2
+              exit 1
+            fi
+            digest="sha256:$(printf '%s' "${VERSION#sha256:}" | tr '[:upper:]' '[:lower:]')"
+          elif [[ "$VERSION" =~ ^[0-9a-fA-F]{64}$ ]]; then
+            digest="sha256:$(printf '%s' "$VERSION" | tr '[:upper:]' '[:lower:]')"
+          fi
+
+          if [ -n "$digest" ]; then
+            echo "Finding version with digest '$digest' in ${IMAGE}"
+          else
+            echo "Finding version tagged '$VERSION' in ${IMAGE}"
+          fi
+          versions_file="$RUNNER_TEMP/package-versions.jsonl"
+          gh api --paginate --jq '.[]' \
+            "/orgs/${OWNER}/packages/container/${PACKAGE_NAME}/versions?per_page=100" \
+            > "$versions_file"
+          mapfile -t version_ids < <(
+            jq -s --arg tag "$VERSION" --arg digest "$digest" \
+              '[.[] | select(if $digest != "" then (.name == $digest or .metadata.container.digest == $digest) else any(.metadata.container.tags[]?; . == $tag) end)] | .[].id' \
+              "$versions_file"
+          )
+          if [ "${#version_ids[@]}" -eq 0 ]; then
+            echo "No package version found matching '$VERSION'." >&2
+            exit 1
+          fi
+          if [ "${#version_ids[@]}" -ne 1 ]; then
+            echo "Found multiple package versions matching '$VERSION'; refusing to delete." >&2
+            exit 1
+          fi
+
+          version_id="${version_ids[0]}"
+          if ! [[ "$version_id" =~ ^[0-9]+$ ]]; then
+            echo "Invalid package version ID returned by GitHub: $version_id" >&2
+            exit 1
+          fi
+          echo "Deleting ${IMAGE} version '$VERSION' (package version ID $version_id)"
+          gh api --method DELETE \
+            "/orgs/${OWNER}/packages/container/${PACKAGE_NAME}/versions/${version_id}"
