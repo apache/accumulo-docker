@@ -62,7 +62,7 @@ RUN set -eux; \
 ##
 FROM buildbase as zookeeper
 
-ARG ZOOKEEPER_VERSION=3.9.5 \
+ARG ZOOKEEPER_VERSION=3.9.7 \
   ZOOKEEPER_FILE=_NOT_SET
 # Copy a known file along with the optional files (that might not exist).
 # The known file, along with '*' for the optional file allows the command
